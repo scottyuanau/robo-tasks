@@ -195,12 +195,12 @@ def renameLabels():
 
 if __name__ == '__main__':
     auto_rename_frequency = 10  # seconds
-    email_filter_frequency = 1  # hours
+    email_filter_frequency = 30  # minutes
 
-    logMSG(f'Email blacklist filter checking every {email_filter_frequency} hour.')
+    logMSG(f'Email blacklist filter checking every {email_filter_frequency} minutes.')
     logMSG(f'Auto Rename checking every {auto_rename_frequency} seconds.')
     logMSG('Auto Task running at background...')
-    schedule.every(email_filter_frequency).hour.do(emailFilter)
+    schedule.every(email_filter_frequency).minutes.do(emailFilter)
     schedule.every(auto_rename_frequency).seconds.do(auto_rename)
     schedule.every(auto_rename_frequency).seconds.do(renameLabels)
     while True:

@@ -1,0 +1,12 @@
+pytz
+numpy
+setuptools
+pandas
+openpyxl
+python-dateutil
+certifi
+pyparsing
+httplib2
+google-api-python-client
+uritemplate
+schedule

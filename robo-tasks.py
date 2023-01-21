@@ -55,7 +55,7 @@ def emailFilter():
     paths = []
     account_name = ['personal-account', 'scott-work-account', 'cafe-account', 'roaster-account']
     for account in account_name:
-        paths.append(f'/Users/scott/Learning/Coding/Python3/auto-tasks/credentials/{account}')
+        paths.append(f'credentials/{account}')
     # modify the path to the correct credential folder
 
     # read blacklist

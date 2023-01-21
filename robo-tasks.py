@@ -20,22 +20,6 @@ import openpyxl
 # pip install --upgrade google-api-python-client google-auth-httplib2 google-auth-oauthlib
 
 
-def logMSG(message):
-    """
-    write logs to local document for easier monitoring.
-    """
-    now = pd.Timestamp('today').strftime("%d/%m/%Y %I:%M:%S")
-    df = pd.DataFrame([[message]], index = [now], columns=['Record'])
-    path = '/Users/scott/Library/CloudStorage/OneDrive-Personal/Auto-Task-Report.xlsx'
-    if not os.path.exists(path):
-        df.to_excel(path, sheet_name='reports')
-    else:
-        wb = openpyxl.load_workbook(path)
-        sheet = wb.active
-        sheet.append([now, message])
-        wb.save(path)
-
-
 class OpenpyxlReaderWOFormatting(OpenpyxlReader):
     """OpenpyxlReader without reading formatting
     - this will decrease number of errors and speedup process
@@ -120,13 +104,13 @@ def emailFilter():
                     }
                     service.users().settings().filters().create(userId='me', body=filter_content).execute()
                     accountname = path.split('/')[-1]
-                    logMSG(f'{email} added to {accountname} blacklist.')
+                    print(f'{email} added to {accountname} blacklist.')
 
         except HttpError as error:
-            logMSG(f'An error occurred: {error}')
+            print(f'An error occurred: {error}')
     current_time = time.ctime(time.time())
-    logMSG(f"Email Blacklist Checked: {current_time}")
-    logMSG("----------------------")
+    print(f"Email Blacklist Checked: {current_time}")
+    print("----------------------")
 
 def auto_rename():
     """The function helps to automatically rename all tax invoices
@@ -167,7 +151,7 @@ def auto_rename():
                 uniq += 1
 
             os.rename(old_path, new_path)
-            logMSG(f'{file} renamed to {new_file_name} at {now}')
+            print(f'{file} renamed to {new_file_name} at {now}')
 
 def renameLabels():
     now = datetime.now()
@@ -196,15 +180,15 @@ def renameLabels():
                 uniq += 1
 
             os.rename(old_path, new_path)
-            logMSG(f'{file} renamed to {new_file_name} at {now}')
+            print(f'{file} renamed to {new_file_name} at {now}')
 
 if __name__ == '__main__':
     auto_rename_frequency = 10  # seconds
     email_filter_frequency = 1  # hours
 
-    logMSG(f'Email blacklist filter checking every {email_filter_frequency} hour.')
-    logMSG(f'Auto Rename checking every {auto_rename_frequency} seconds.')
-    logMSG('Auto Task running at background...')
+    print(f'Email blacklist filter checking every {email_filter_frequency} hour.')
+    print(f'Auto Rename checking every {auto_rename_frequency} seconds.')
+    print('Auto Task running at background...')
     schedule.every(email_filter_frequency).hour.do(emailFilter)
     schedule.every(auto_rename_frequency).seconds.do(auto_rename)
     schedule.every(auto_rename_frequency).seconds.do(renameLabels)

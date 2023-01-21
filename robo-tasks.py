@@ -45,7 +45,18 @@ class OpenpyxlReaderWOFormatting(OpenpyxlReader):
                 return orig_read(name, pwd=pwd)
 
         return new_read
-
+def logMSG(message):
+    # log file path
+    path = '/Users/scott/Library/CloudStorage/OneDrive-Personal/log.log'
+    now = datetime.now()
+    if not os.path.exists(path):
+        with open(path, 'w') as f:
+            print(f'{now}: {message}')
+            print(f'{now}: {message}', file=f)
+    else:
+        with open(path, 'a') as f:
+            print(f'{now}: {message}')
+            print(f'{now}: {message}', file=f)
 
 def emailFilter():
     # Gmail API Scope
@@ -104,13 +115,13 @@ def emailFilter():
                     }
                     service.users().settings().filters().create(userId='me', body=filter_content).execute()
                     accountname = path.split('/')[-1]
-                    print(f'{email} added to {accountname} blacklist.')
+                    logMSG(f'{email} added to {accountname} blacklist.')
 
         except HttpError as error:
-            print(f'An error occurred: {error}')
+            logMSG(f'An error occurred: {error}')
     current_time = time.ctime(time.time())
-    print(f"Email Blacklist Checked: {current_time}")
-    print("----------------------")
+    logMSG(f"Email Blacklist Checked: {current_time}")
+    logMSG("----------------------")
 
 def auto_rename():
     """The function helps to automatically rename all tax invoices
@@ -151,7 +162,7 @@ def auto_rename():
                 uniq += 1
 
             os.rename(old_path, new_path)
-            print(f'{file} renamed to {new_file_name} at {now}')
+            logMSG(f'{file} renamed to {new_file_name} at {now}')
 
 def renameLabels():
     now = datetime.now()
@@ -180,15 +191,15 @@ def renameLabels():
                 uniq += 1
 
             os.rename(old_path, new_path)
-            print(f'{file} renamed to {new_file_name} at {now}')
+            logMSG(f'{file} renamed to {new_file_name} at {now}')
 
 if __name__ == '__main__':
     auto_rename_frequency = 10  # seconds
     email_filter_frequency = 1  # hours
 
-    print(f'Email blacklist filter checking every {email_filter_frequency} hour.')
-    print(f'Auto Rename checking every {auto_rename_frequency} seconds.')
-    print('Auto Task running at background...')
+    logMSG(f'Email blacklist filter checking every {email_filter_frequency} hour.')
+    logMSG(f'Auto Rename checking every {auto_rename_frequency} seconds.')
+    logMSG('Auto Task running at background...')
     schedule.every(email_filter_frequency).hour.do(emailFilter)
     schedule.every(auto_rename_frequency).seconds.do(auto_rename)
     schedule.every(auto_rename_frequency).seconds.do(renameLabels)

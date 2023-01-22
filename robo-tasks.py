@@ -66,7 +66,7 @@ def emailFilter():
     paths = []
     account_name = ['personal-account', 'scott-work-account', 'cafe-account', 'roaster-account']
     for account in account_name:
-        paths.append(f'credentials/{account}')
+        paths.append(f'/Users/scott/Projects/Python Projects/robo-tasks/credentials/{account}')
     # modify the path to the correct credential folder
 
     # read blacklist
@@ -119,9 +119,6 @@ def emailFilter():
 
         except HttpError as error:
             logMSG(f'An error occurred: {error}')
-    current_time = time.ctime(time.time())
-    logMSG(f"Email Blacklist Checked: {current_time}")
-    logMSG("----------------------")
 
 def auto_rename():
     """The function helps to automatically rename all tax invoices
@@ -195,12 +192,12 @@ def renameLabels():
 
 if __name__ == '__main__':
     auto_rename_frequency = 10  # seconds
-    email_filter_frequency = 30  # minutes
+    email_filter_frequency = 60  # seconds
 
-    logMSG(f'Email blacklist filter checking every {email_filter_frequency} minutes.')
+    logMSG(f'Email blacklist filter checking every {email_filter_frequency} seconds.')
     logMSG(f'Auto Rename checking every {auto_rename_frequency} seconds.')
     logMSG('Auto Task running at background...')
-    schedule.every(email_filter_frequency).minutes.do(emailFilter)
+    schedule.every(email_filter_frequency).seconds.do(emailFilter)
     schedule.every(auto_rename_frequency).seconds.do(auto_rename)
     schedule.every(auto_rename_frequency).seconds.do(renameLabels)
     while True:

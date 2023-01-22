@@ -2,3 +2,5 @@
 .DS_Store
 /build/
 /dist/
+/errors.err
+/out.out

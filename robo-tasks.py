@@ -163,6 +163,11 @@ def auto_rename():
 
     #  convert images to pdf for consistency
     img_test = ['jpg', 'jpeg', 'png', 'bmp', 'tiff','webp']
+    file_array = []
+    for file in os.listdir(PATH):
+        if os.path.isfile(os.path.join(PATH, file)) and file != '.DS_Store':
+            file_array.append(file)
+
     for file in file_array:
         if file.split('.')[-1].lower() in img_test:
             image_1 = Image.open(f'{PATH}/{file}')

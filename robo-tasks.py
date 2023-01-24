@@ -15,6 +15,7 @@ from openpyxl.xml import constants as openpyxl_xml_constants
 from pandas import ExcelFile
 from pandas.io.excel._openpyxl import OpenpyxlReader
 import openpyxl
+from PIL import Image
 
 # Install Google API
 # pip install --upgrade google-api-python-client google-auth-httplib2 google-auth-oauthlib
@@ -142,7 +143,6 @@ def auto_rename():
             test = int(test)
         except:
             test
-
         if type(test) != int:
             old_path = f'{PATH}/{file}'
             # today = date.today().strftime('%d%m%Y')
@@ -160,6 +160,17 @@ def auto_rename():
 
             os.rename(old_path, new_path)
             logMSG(f'{file} renamed to {new_file_name} at {now}')
+
+    #  convert images to pdf for consistency
+    img_test = ['jpg', 'jpeg', 'png', 'bmp', 'tiff','webp']
+    for file in file_array:
+        if file.split('.')[-1].lower() in img_test:
+            image_1 = Image.open(f'{PATH}/{file}')
+            im_1 = image_1.convert('RGB')
+            im_1.save(f'{PATH}/{file.split(".")[0]}.pdf')
+            os.remove(f'{PATH}/{file}')
+            logMSG(f'{file} converted to PDF.')
+
 
 def renameLabels():
     now = datetime.now()

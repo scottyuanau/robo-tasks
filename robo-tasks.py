@@ -16,6 +16,7 @@ from pandas import ExcelFile
 from pandas.io.excel._openpyxl import OpenpyxlReader
 import openpyxl
 from PIL import Image
+from retrying import retry
 
 # Install Google API
 # pip install --upgrade google-api-python-client google-auth-httplib2 google-auth-oauthlib
@@ -121,6 +122,7 @@ def emailFilter():
         except HttpError as error:
             logMSG(f'An error occurred: {error}')
 
+
 def auto_rename():
     """The function helps to automatically rename all tax invoices
         from supplier.pdf to supplier + creation_date.pdf
@@ -172,7 +174,7 @@ def auto_rename():
         if file.split('.')[-1].lower() in img_test:
             image_1 = Image.open(f'{PATH}/{file}')
             im_1 = image_1.convert('RGB')
-            im_1.save(f'{PATH}/{file.split(".")[0]}.pdf')
+            im_1.save(f'{PATH}/{file.split(".")[0]}.pdf', optimize=True, quality=70)
             os.remove(f'{PATH}/{file}')
             logMSG(f'{file} converted to PDF.')
 
@@ -205,17 +207,22 @@ def renameLabels():
 
             os.rename(old_path, new_path)
             logMSG(f'{file} renamed to {new_file_name} at {now}')
-
-if __name__ == '__main__':
+@retry(wait_fixed=60000)
+def autotasks():
     auto_rename_frequency = 10  # seconds
-    email_filter_frequency = 60  # seconds
+    email_filter_frequency = 30  # minutes
 
-    logMSG(f'Email blacklist filter checking every {email_filter_frequency} seconds.')
+    logMSG(f'Email blacklist filter checking every {email_filter_frequency} minutes.')
     logMSG(f'Auto Rename checking every {auto_rename_frequency} seconds.')
     logMSG('Auto Task running at background...')
-    schedule.every(email_filter_frequency).seconds.do(emailFilter)
+    schedule.every(email_filter_frequency).minutes.do(emailFilter)
     schedule.every(auto_rename_frequency).seconds.do(auto_rename)
     schedule.every(auto_rename_frequency).seconds.do(renameLabels)
+
     while True:
         schedule.run_pending()
         time.sleep(1)
+
+
+if __name__ == '__main__':
+    autotasks()
